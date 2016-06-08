@@ -1,6 +1,9 @@
 const path = require('path');
 const escapeRegexp = require('escape-regexp');
-const fsp = require('fs-promise');
+const fs = require('fs');
+const pify = require('pify');
+const readdir = pify(fs.readdir);
+const stat = pify(fs.stat);
 
 exports.map = mapWithPattern;
 exports.forEach = forEachWithPattern;
@@ -25,7 +28,7 @@ function parsePattern(pattern){
 }
 
 function searchWithMap(map, {cwd=process.cwd(), base=''} = {}) {
-    return fsp.readdir(path.join(cwd, base)).then(
+    return readdir(path.join(cwd, base)).then(
         files => Promise.all(files.map(
             file => {
                 var match = map[0].mask.exec(file);
@@ -42,7 +45,7 @@ function searchWithMap(map, {cwd=process.cwd(), base=''} = {}) {
         )
         .filter(item => item)
         .map(
-            item => fsp.stat(path.join(cwd, base, item.file))
+            item => stat(path.join(cwd, base, item.file))
             .then(stat => Object.assign(item, {stat}))
         ))
     )
@@ -87,6 +90,9 @@ function searchWithPattern(pattern, {cwd=process.cwd()} = {}) {
 
             items.forEach(item => {
                 filepath.push(item.file);
+                if (item.slices < 1) {
+                    return;
+                }
                 var i = 0;
                 while (item.slices--) {
                     params.push(item.match[++i]);

@@ -1,6 +1,6 @@
 {
   "name": "batch-match",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "File System Router",
   "main": "src/batch-match.js",
   "scripts": {
@@ -26,9 +26,11 @@
   "devDependencies": {
     "mocha": "^2.5.3"
   },
-  "engines": {"node": ">=6.0"},
+  "engines": {
+    "node": ">=6.0"
+  },
   "dependencies": {
     "escape-regexp": "0.0.1",
-    "fs-promise": "^0.5.0"
+    "pify": "^2.3.0"
   }
 }
